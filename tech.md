@@ -65,7 +65,7 @@ Use Pydantic-style models (even if you don’t actually import pydantic yet).
 
 ### 2.1 Enum for failure modes
 
-```
+```python
 from enum import Enum
 
 class FailureMode(str, Enum):
@@ -82,7 +82,7 @@ class FailureMode(str, Enum):
 
 ### 2.2 Tool and test schemas
 
-```
+```python
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 
@@ -112,7 +112,7 @@ class TestCase:
 
 ### 2.3 Execution and evaluation results
 
-```
+```python
 @dataclass
 class ExecutionResult:
     test_case_id: str
@@ -140,7 +140,7 @@ The executor is a thin wrapper that runs **one test case** against a **backend**
 
 ### 3.1 OpenAI-style executor (function calling)
 
-```
+```python
 # executor.py
 import os
 import time
@@ -218,7 +218,7 @@ class AgentExecutor:
 
 Later, you will let customers point you at their own agent:
 
-```
+```python
 class HttpAgentExecutor(AgentExecutor):
     def __init__(self, agent_url: str):
         super().__init__(api_key=None)
@@ -282,7 +282,7 @@ The evaluator receives a `TestCase` and an `ExecutionResult` and outputs an `Eva
 
 ### 4.2 Core evaluator implementation
 
-```
+```python
 # evaluator.py
 from typing import Dict, Any, List, Set
 from .models import TestCase, ExecutionResult, EvalResult, FailureMode
@@ -433,7 +433,7 @@ class ToolUseEvaluator:
 
 ### 5.1 Scorecard aggregation
 
-```
+```python
 # runner.py
 import json
 import asyncio
@@ -488,7 +488,7 @@ class EvalRunner:
 
 ### 5.2 CLI
 
-```
+```python
 # cli.py
 import json
 import asyncio
@@ -505,7 +505,17 @@ async def main():
     with open(args.eval_pack) as f:
         pack = json.load(f)
 
-    runner =
+    runner = EvalRunner(api_key=None, model=args.model)
+    scorecard = await runner.run_suite(pack)
+    out = scorecard.to_json()
+    with open(args.output, "w") as f:
+        json.dump(out, f, indent=2)
+    print(f"Wrote {args.output}")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+```
 
 Sources
 [1] 10 best LLM evaluation tools with superior integrations in 2025 https://www.braintrust.dev/articles/best-llm-evaluation-tools-integrations-2025
